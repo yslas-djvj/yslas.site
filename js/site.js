@@ -13,6 +13,7 @@ const MENU_LINKS = [
 	['ABOUT', 'about'],
 	['SONICS', 'sonics'],
 	['VISUALS', 'visuals'],
+	['EPK', 'epk']
 ];
 
 /* site title shown in the header (links home) */
