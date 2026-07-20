@@ -1,0 +1,9 @@
+# Netlify-only (GitHub Pages ignores this file — it resolves clean slugs itself).
+# The site links internally with clean slugs (/about, not /about.html). These
+# 301s make sure the old extension URLs, and anything already linking to them,
+# land on the canonical clean path instead of serving the page at two URLs.
+/index.html     /           301!
+/about.html     /about      301!
+/sonics.html    /sonics     301!
+/visuals.html   /visuals    301!
+/epk.html       /epk        301!
