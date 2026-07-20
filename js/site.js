@@ -7,8 +7,9 @@
    root-absolute slug — "about" and "about.html" both become href="/about", and
    "", "/" or "index.html" all become "/". Because they are root-absolute the
    same link works from any folder depth.
-   NOTE: the EPK exists but is deliberately NOT in this menu — it is the
-   unlisted press-kit page, reachable only by its direct URL (/epk). */
+   NOTE: the EPK is typically deliberately NOT in this menu — it is an
+   unlisted press-kit page, reachable only by its direct URL (/epk). It's been added
+   to the menu now. Remove from this list to remove access.*/
 const MENU_LINKS = [
 	['ABOUT', 'about'],
 	['SONICS', 'sonics'],
