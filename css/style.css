@@ -1,0 +1,538 @@
+/* YSLAS — hand-coded rebuild of the Squarespace original.
+   body = IBM Plex Mono 600, headings = Lilita One 400. */
+
+/* ---------- fonts (self-hosted, latin subsets) ---------- */
+@font-face {
+	font-family: 'IBM Plex Mono';
+	font-style: normal; font-weight: 600; font-display: swap;
+	src: url('../assets/fonts/ibm-plex-mono-600.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'IBM Plex Mono';
+	font-style: normal; font-weight: 700; font-display: swap;
+	src: url('../assets/fonts/ibm-plex-mono-700.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'IBM Plex Mono';
+	font-style: italic; font-weight: 600; font-display: swap;
+	src: url('../assets/fonts/ibm-plex-mono-600-italic.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'IBM Plex Mono';
+	font-style: italic; font-weight: 700; font-display: swap;
+	src: url('../assets/fonts/ibm-plex-mono-700-italic.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Lilita One';
+	font-style: normal; font-weight: 400; font-display: swap;
+	src: url('../assets/fonts/lilita-one-400.woff2') format('woff2');
+}
+
+/* ---------- theme variables (HSL triplets from the original) ---------- */
+:root {
+	--black-hsl: 30, 12.5%, 18.82%;        /* warm brown-black */
+	--white-hsl: 42, 35.71%, 94.51%;       /* warm off-white   */
+	--accent-hsl: 30.73, 22.65%, 64.51%;   /* taupe            */
+	--light-accent-hsl: 33.33, 32.14%, 89.02%;
+	--dark-accent-hsl: 32.5, 16%, 29.41%;  /* medium brown (footer) */
+	--black: hsl(var(--black-hsl));
+	--white: hsl(var(--white-hsl));
+	--accent: hsl(var(--accent-hsl));
+	--brown: hsl(var(--dark-accent-hsl));
+	--body-font: 'IBM Plex Mono', monospace;
+	--heading-font: 'Lilita One', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	--pad: 6vw;               /* section side padding */
+	--header-h: 72px;
+	--box-radius: 3px;
+	--cover-hover-scale: 1.04;   /* release-cover hover grow; 1 = no grow */
+	/* Home hero wordmark. --wordmark-top is how far down the hero it sits
+	   (50% = dead centre). --wordmark-width drives the fitted font size:
+	   site.js sizes the text to exactly fill this width, so halving it halves
+	   the type. Mobile overrides the width below to keep the wordmark large. */
+	--wordmark-top: 75%;
+	--wordmark-width: 33%;
+}
+
+/* ---------- base ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+	font-family: var(--body-font);
+	font-weight: 600;
+	font-size: 1rem;
+	line-height: 1.6;
+	background: var(--white);
+	color: var(--black);
+	overflow-x: hidden;
+}
+h1, h2, h3, h4 {
+	font-family: var(--heading-font);
+	font-weight: 400;
+	line-height: 1.1;
+}
+h1 { font-size: clamp(2.8rem, 8vw, 4rem); }
+h2 { font-size: clamp(2rem, 6vw, 2.8rem); }
+h3 { font-size: clamp(1.3rem, 4vw, 1.7rem); }
+h4 { font-size: 1.2rem; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+a:hover { opacity: 0.7; }
+
+.theme-black { background: var(--black); color: var(--white); }
+.theme-light { background: var(--white); color: var(--black); }
+
+/* ---------- shared: cream text box + slashes + pill button ---------- */
+.text-box {
+	background: var(--white);
+	color: var(--black);
+	padding: clamp(1.6em, 3vw, 2.6em);
+	border-radius: var(--box-radius);
+}
+.text-box p + p { margin-top: 1.2em; }
+/* desktop gets a larger reading size; mobile keeps the base 1rem */
+@media (min-width: 761px) {
+	.text-box { font-size: 1.2rem; }
+}
+
+.slashes {
+	font-family: var(--heading-font);
+	letter-spacing: 0.1em;
+}
+
+/* pill button — solid dark fill, cream text, fully rounded (see EPK "download assets") */
+.btn {
+	display: inline-block;
+	font-family: var(--body-font);
+	font-weight: 600;
+	font-size: 0.95rem;
+	text-decoration: none;
+	color: var(--white);
+	background: var(--black);
+	padding: 0.95em 2.6em;
+	border-radius: 999px;
+	border: none;
+	transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.82; }
+
+/* ---------- header ---------- */
+/* Persistent bar: FIXED on every page, always visible, on mobile and desktop.
+   Starts fully clear; js/site.js adds .scrolled past 40px, which fades in the
+   dark tint + blur (and fades back out at the very top). */
+header.site-header {
+	position: fixed;
+	top: 0; left: 0; right: 0;
+	z-index: 1000;
+	height: var(--header-h);
+	padding: 0 var(--pad);
+	background: hsla(var(--black-hsl), 0);
+	color: var(--white);
+	-webkit-backdrop-filter: blur(0px);
+	        backdrop-filter: blur(0px);
+	transition: background 0.4s ease, color 0.4s ease,
+	            -webkit-backdrop-filter 0.4s ease, backdrop-filter 0.4s ease;
+}
+header.site-header .header-inner {
+	position: relative;   /* the centred .site-title anchors to this */
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+/* Bar look once scrolled — tweak the alpha (0 = clear … 1 = solid) and the two
+   blur values (higher = frostier). */
+header.site-header.scrolled {
+	background: hsla(var(--black-hsl), 0.72);
+	-webkit-backdrop-filter: blur(6px);
+	        backdrop-filter: blur(6px);
+}
+/* While the bar is clear over a photo/video, a soft shadow keeps the white text
+   and icons legible. On .header-inner rather than the header itself: a filtered
+   ancestor would become the containing block for fixed children. */
+header.site-header:not(.scrolled) .header-inner {
+	filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.55));
+}
+/* Pages opening on a LIGHT section: dark nav until the tint arrives. */
+body.light-top header.site-header:not(.scrolled) { color: var(--black); }
+body.light-top header.site-header:not(.scrolled) .header-inner { filter: none; }
+/* …unless the mobile menu is open — the bar then sits on the dark overlay. */
+body.menu-open header.site-header { color: var(--white); }
+body.menu-open header.site-header .header-inner { filter: none; }
+@media (prefers-reduced-motion: reduce) { header.site-header { transition: none; } }
+
+header.site-header .header-nav {
+	display: flex;
+	gap: 1.6em;
+	flex: 1;
+}
+header.site-header .header-nav a {
+	text-decoration: none;
+	font-size: 0.95rem;
+	letter-spacing: 0.02em;
+}
+header.site-header .site-title {
+	font-family: var(--heading-font);
+	font-size: 1.8rem;
+	text-decoration: none;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+header.site-header .header-icons {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+	gap: 1em;
+}
+header.site-header .header-icons svg { width: 22px; height: 22px; }
+
+header.site-header .burger { display: none; }
+/* .mobile-menu is a direct child of <body> (see js/site.js) so the scrolled
+   header's backdrop-filter can't trap its fixed positioning */
+.mobile-menu { display: none; }
+.mobile-menu a {
+	text-decoration: none;
+	letter-spacing: 0.02em;
+}
+@media (max-width: 760px) {
+	header.site-header .header-nav,
+	header.site-header .header-icons { display: none; }
+	header.site-header .burger {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 8px;
+		width: 34px; height: 34px;
+		background: none; border: none; cursor: pointer;
+		color: inherit;
+		padding: 0;
+	}
+	header.site-header .burger span {
+		display: block; height: 2px; width: 100%;
+		background: currentColor;
+		transition: transform 0.25s;
+	}
+	body.menu-open header.site-header .burger span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+	body.menu-open header.site-header .burger span:nth-child(2) { transform: translateY(-5px) rotate(-45deg); }
+	body.menu-open .mobile-menu {
+		display: flex;
+		flex-direction: column;
+		gap: 1.4em;
+		position: fixed;
+		inset: var(--header-h) 0 0 0;
+		background: var(--black);
+		color: var(--white);
+		padding: 2em var(--pad);
+		font-size: 1.4rem;
+		z-index: 999;
+	}
+	body.menu-open .mobile-menu svg { width: 26px; height: 26px; }
+}
+
+/* =====================================================================
+   VIDEO BACKGROUND HERO  (About + EPK only)
+   plain looping video behind the content — no overlay/tint
+   ===================================================================== */
+.video-hero {
+	position: relative;
+	overflow: hidden;
+	color: var(--white);
+}
+.video-hero .bg-video {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: 0;
+}
+.video-hero .hero-inner {
+	position: relative;
+	z-index: 1;
+	max-width: 1750px;
+	margin: 0 auto;
+	padding: calc(var(--header-h) + 5vh) var(--pad) 7vh;
+}
+.video-hero .slashes { color: var(--white); }
+
+/* =====================================================================
+   HOME
+   ===================================================================== */
+.hero {
+	position: relative;
+	min-height: 100vh;
+	overflow: hidden;
+	background: var(--black) url('../assets/img/yslas-main-graficc-bitmap.jpg') center / cover no-repeat;
+	color: var(--white);
+}
+/* wordmark sits below centre (see --wordmark-top), never wraps — site.js sizes
+   it to fill --wordmark-width exactly, so it always stays on one line */
+.scaled-text {
+	position: absolute;
+	top: var(--wordmark-top);
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1;
+	width: var(--wordmark-width);
+	text-align: center;
+	font-family: var(--body-font);
+	font-weight: 600;
+	line-height: 1;
+	white-space: nowrap;
+}
+/* mobile keeps the wordmark at its larger size (and the same lowered position) */
+@media (max-width: 760px) {
+	.scaled-text { --wordmark-width: 66%; }
+}
+
+/* Film-grain / static overlay (same mechanic as the alkabil site). Procedural
+   SVG feTurbulence noise — no image asset. Sits above the background image and
+   below the wordmark; `overlay` blend lets the photo show through. Tune opacity
+   for strength and the animation speed for how "busy" the static reads. */
+.grain {
+	position: absolute;
+	inset: -8%;              /* oversized so the jitter never exposes an edge */
+	z-index: 0;
+	pointer-events: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+	background-size: 130px 130px;
+	opacity: 0.82;
+	mix-blend-mode: overlay;
+	animation: grain-flicker 0.5s steps(4) infinite;
+}
+@keyframes grain-flicker {
+	0%   { transform: translate(0, 0); }
+	25%  { transform: translate(-4%, 3%); }
+	50%  { transform: translate(3%, -3%); }
+	75%  { transform: translate(-2%, -4%); }
+	100% { transform: translate(0, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
+
+/* two-up crystal gallery — full bleed, no gaps */
+.gallery-2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0;
+	padding: 0;
+}
+@media (max-width: 760px) { .gallery-2 { grid-template-columns: 1fr; } }
+
+/* Concentric-ring parallax (same mechanic as the alkabil hero). js/site.js
+   replaces each host's contents with N masked ring layers, every one holding a
+   copy of the image, and shifts them with the pointer — inner disc slowest,
+   outer rings fastest. Masks are set inline per ring; tunables live in the
+   PARALLAX config in js/site.js. The plain <img> is the fallback that shows if
+   JS is off or reduced-motion is on (the host is then left untouched). */
+.parallax {
+	position: relative;
+	aspect-ratio: 1;
+	overflow: hidden;
+}
+.parallax > img { width: 100%; height: 100%; object-fit: cover; }
+.parallax-ring {
+	position: absolute; inset: 0;
+	-webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.parallax-ring-img {
+	position: absolute;          /* inset set inline (oversized so shifts hide edges) */
+	background-size: cover;
+	background-position: center;
+	will-change: transform;
+}
+
+/* NEW — newest release cover on the light-streak background */
+.home-new {
+	background: var(--black) url('../assets/img/yslas-light-bitmap.jpg') center / cover no-repeat;
+	color: var(--white);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2.2rem;
+	padding: 9vh var(--pad);
+	text-align: center;
+}
+
+/* Release cover — soft drop shadow, grows slightly on hover. The hover lives on
+   the wrapper (not the <a>) so it still works if the cover is ever unlinked. */
+.release-cover { width: min(100%, 920px); }
+/* opt out of the global `a:hover { opacity }` — the cover should only grow,
+   never fade */
+.release-cover a { display: block; }
+.release-cover a:hover { opacity: 1; }
+.release-cover img {
+	width: 100%;
+	height: auto;
+	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
+	transition: transform 0.45s cubic-bezier(0.22, 0.7, 0.3, 1),
+	            box-shadow 0.45s cubic-bezier(0.22, 0.7, 0.3, 1);
+}
+.release-cover:hover img {
+	transform: scale(var(--cover-hover-scale, 1.04));
+	box-shadow: 0 22px 52px rgba(0, 0, 0, 0.5);
+}
+@media (prefers-reduced-motion: reduce) {
+	.release-cover img { transition: none; }
+	.release-cover:hover img { transform: none; }
+}
+
+/* =====================================================================
+   ABOUT  (cream text box + square headshot, over video)
+   desktop: slashes-top / [box | image] / slashes-bottom
+   mobile:  slashes-top, box, slashes-bottom, image (image = wide rectangle)
+   ===================================================================== */
+.about-hero { min-height: 100vh; display: flex; align-items: center; }
+.about-hero .hero-inner { width: 100%; }
+.about-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+	grid-template-rows: auto auto auto;
+	column-gap: clamp(1.5rem, 3vw, 2.75rem);
+	row-gap: 1.25rem;
+	align-content: center;
+}
+.about-layout .slashes-top    { grid-column: 1; grid-row: 1; }
+.about-layout .about-bio      { grid-column: 1; grid-row: 2; }
+.about-layout .slashes-bottom { grid-column: 1; grid-row: 3; }
+.about-layout .about-img      { grid-column: 2; grid-row: 2; align-self: stretch; }
+.about-layout .about-img img  { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+@media (max-width: 760px) {
+	.about-layout { display: flex; flex-direction: column; gap: 1.4rem; }
+	.about-layout .about-img { aspect-ratio: 16 / 9; }
+}
+
+/* =====================================================================
+   SONICS / VISUALS  (no video — light bg, image + coming soon)
+   ===================================================================== */
+.split {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	gap: 5vw;
+	/* top padding clears the fixed header */
+	padding: calc(var(--header-h) + 6vh) var(--pad) 6vh;
+	min-height: 100vh;
+}
+.split-img img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--box-radius); }
+.split-text .slashes { display: block; margin: 1em 0 1.6em; font-size: 1.4rem; }
+.split.flip .split-img { order: 2; }
+@media (max-width: 760px) {
+	.split { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+	.split.flip .split-img { order: 0; }
+	.split-text .slashes { margin: 0.6em 0 1.2em; }
+}
+
+/* =====================================================================
+   EPK  (unlisted — video hero with logo, box, logos, embed, download)
+   ===================================================================== */
+.epk-logo-light { width: min(220px, 55vw); margin: 0 auto 2.5rem; }
+.epk-logo-light img { width: 100%; object-fit: contain; }
+
+/* portrait unit: text box + headshot */
+.epk-portrait {
+	display: grid;
+	grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+	grid-template-rows: auto auto auto;
+	column-gap: clamp(1.5rem, 3vw, 2.75rem);
+	row-gap: 1.25rem;
+	margin-bottom: 3rem;
+}
+.epk-portrait .slashes-top    { grid-column: 1; grid-row: 1; }
+.epk-portrait .epk-bio        { grid-column: 1; grid-row: 2; }
+.epk-portrait .slashes-bottom { grid-column: 1; grid-row: 3; }
+.epk-portrait .epk-img        { grid-column: 2; grid-row: 2; align-self: stretch; }
+.epk-portrait .epk-img img    { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+@media (max-width: 760px) {
+	/* DOM order is image-first, so the headshot sits at the top on mobile */
+	.epk-portrait { display: flex; flex-direction: column; gap: 1.4rem; }
+	.epk-portrait .epk-img { aspect-ratio: 16 / 9; order: -1; }
+}
+
+/* extras below the portrait */
+.epk-extras { text-align: center; }
+.more-logos {
+	width: fit-content;
+	margin: 0 auto 2.5rem;
+	padding: 0.65em 1.6em;
+}
+/* logo variants sit on a cream panel so the light marks stay readable,
+   with a drop shadow to lift them off it */
+.epk-logos {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	align-items: center;
+	gap: clamp(1.5rem, 4vw, 3rem);
+	margin-bottom: 3rem;
+	background: var(--white);
+	border-radius: var(--box-radius);
+	padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+.epk-logos img {
+	width: 100%;
+	object-fit: contain;
+	filter: drop-shadow(0 2px 5px hsla(var(--black-hsl), 0.5));
+}
+
+/* audio: Tracks | Mixes, all embeds the same compact height */
+.epk-audio {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+	max-width: 1100px;
+	margin: 0 auto 2.5rem;
+	text-align: left;
+}
+.epk-audio h4 {
+	font-size: 1.4rem;
+	margin-bottom: 0.8rem;
+}
+.epk-audio iframe {
+	width: 100%;
+	height: 160px;
+	border: 0;
+	display: block;
+}
+.epk-audio iframe + iframe { margin-top: 1rem; }
+.epk-download { margin-bottom: 2.5rem; }
+.epk-credits { font-size: 0.85rem; line-height: 1.9; }
+.epk-credits a { text-decoration: underline; }
+@media (max-width: 760px) {
+	.epk-logos { grid-template-columns: 1fr; gap: 2rem; }
+	.epk-audio { grid-template-columns: 1fr; }
+}
+
+/* EPK live-photo gallery — all 6 in one row when wide; too narrow for 6 and it
+   becomes 4 + 2 (the trailing two keep their cell size, never stretched);
+   too narrow for 4 and it settles at 2 columns, which is the floor. */
+.epk-gallery {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 1.5vw;
+	padding: 1.5vw;
+	background: var(--black);
+}
+.epk-gallery img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+@media (max-width: 1500px) { .epk-gallery { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 1000px) { .epk-gallery { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 760px)  { .epk-gallery { grid-template-columns: repeat(2, 1fr); gap: 3vw; padding: 3vw; } }
+
+/* =====================================================================
+   FOOTER  (warm dark-brown bar, cream text)
+   ===================================================================== */
+footer.site-foot {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 2em;
+	padding: 3.5em var(--pad) 4.5em;
+	background: var(--brown);
+	color: var(--white);
+}
+footer.site-foot a { color: var(--white); }
+footer.site-foot .foot-email { font-size: 1.3rem; margin-bottom: 1.4em; }
+footer.site-foot .foot-links a { text-decoration: underline; }
+footer.site-foot .foot-right .foot-links { display: flex; flex-direction: column; gap: 0.35em; }
+footer.site-foot .foot-right .foot-links a { text-decoration: none; }
+footer.site-foot .foot-right .foot-links a:hover { text-decoration: underline; }
+@media (max-width: 760px) {
+	footer.site-foot { flex-direction: column; gap: 2.5em; }
+}
