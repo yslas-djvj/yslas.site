@@ -46,6 +46,7 @@
 	--box-radius: 3px;
 	--img-radius: 10px;          /* rounded corners on the Sonics/Visuals artwork */
 	--cover-hover-scale: 1.04;   /* release-cover hover grow; 1 = no grow */
+	--cover-max: 560px;          /* widest the home release cover ever gets */
 	/* Home hero wordmark. --wordmark-top is how far down the hero it sits
 	   (50% = dead centre). --wordmark-width drives the fitted font size:
 	   site.js sizes the text to exactly fill this width, so halving it halves
@@ -358,13 +359,12 @@ header.site-header .burger { display: none; }
 
 /* Release cover — soft drop shadow, grows slightly on hover. The hover lives on
    the wrapper (not the <a>) so it still works if the cover is ever unlinked. */
-/* Mobile keeps the full column width (it reads well there). From tablet up the
-   cover is sized in vw so it scales smoothly with the window instead of jumping
-   straight to its cap — 828px is the ceiling on very wide screens. */
-.release-cover { width: 100%; max-width: 828px; }
-@media (min-width: 761px) {
-	.release-cover { width: min(52vw, 828px); }
-}
+/* Sized exactly like the newest-release cover on the alkabil site: ONE rule, no
+   breakpoint. It takes the full column width minus a small inset on narrow
+   screens, and stops growing at --cover-max on everything wider. (The section
+   already insets its sides by --pad, so the 4vw here is the extra breathing
+   room alkabil gets from its own gutter.) --cover-max is the size dial. */
+.release-cover { width: min(calc(100% - 4vw), var(--cover-max)); }
 /* opt out of the global `a:hover { opacity }` — the cover should only grow,
    never fade */
 .release-cover a { display: block; }
