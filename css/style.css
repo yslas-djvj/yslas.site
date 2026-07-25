@@ -44,6 +44,7 @@
 	--pad: 6vw;               /* section side padding */
 	--header-h: 72px;
 	--box-radius: 3px;
+	--img-radius: 10px;          /* rounded corners on the Sonics/Visuals artwork */
 	--cover-hover-scale: 1.04;   /* release-cover hover grow; 1 = no grow */
 	/* Home hero wordmark. --wordmark-top is how far down the hero it sits
 	   (50% = dead centre). --wordmark-width drives the fitted font size:
@@ -428,27 +429,41 @@ header.site-header .burger { display: none; }
    see §3.1c — so the crystal reacts to the pointer like the home gallery. */
 .split-layout {
 	display: grid;
-	grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
 	grid-template-rows: auto auto auto;
 	column-gap: clamp(1.5rem, 3vw, 2.75rem);
 	row-gap: 1.25rem;
 	align-content: center;
 }
-.split-layout .slashes-top    { grid-column: 1; grid-row: 1; }
-.split-layout .split-box      { grid-column: 1; grid-row: 2; }
-.split-layout .slashes-bottom { grid-column: 1; grid-row: 3; }
-.split-layout .split-img      { grid-column: 2; grid-row: 2; align-self: center; }
-/* Visuals: artwork left, copy right */
+/* DEFAULT = SONICS: artwork LEFT, copy right.
+   The copy column is the wider one, so the fr values swap with the sides. */
+.split-layout               { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); }
+.split-layout .split-img      { grid-column: 1; grid-row: 2; }
+.split-layout .slashes-top    { grid-column: 2; grid-row: 1; }
+.split-layout .split-box      { grid-column: 2; grid-row: 2; }
+.split-layout .slashes-bottom { grid-column: 2; grid-row: 3; }
+
+/* .flip = VISUALS: artwork RIGHT, copy left — the same arrangement as About. */
+.split-layout.flip               { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+.split-layout.flip .split-img      { grid-column: 2; }
 .split-layout.flip .slashes-top,
 .split-layout.flip .split-box,
-.split-layout.flip .slashes-bottom { grid-column: 2; }
-.split-layout.flip .split-img      { grid-column: 1; }
-.split-layout .split-img .parallax { border-radius: var(--box-radius); }
+.split-layout.flip .slashes-bottom { grid-column: 1; }
+
+/* Artwork fills the row height so the box and image line up top and bottom,
+   exactly like About. `aspect-ratio: auto` overrides the square default on
+   .parallax; the ring images use background-size: cover, so they crop rather
+   than distort at whatever height the copy column ends up. */
+.split-layout .split-img { align-self: stretch; }
+.split-layout .split-img .parallax {
+	height: 100%;
+	aspect-ratio: auto;
+	border-radius: var(--img-radius);
+}
 @media (max-width: 760px) {
 	/* stack in DOM order; artwork is last in the markup so it lands at the
 	   bottom, as a wide rectangle (matching About) */
 	.split-layout { display: flex; flex-direction: column; gap: 1.4rem; }
-	.split-layout .split-img .parallax { aspect-ratio: 16 / 9; }
+	.split-layout .split-img .parallax { height: auto; aspect-ratio: 16 / 9; }
 }
 
 /* ---- release block (mechanic ported from the alkabil artist pages) ----
