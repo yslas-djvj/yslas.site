@@ -10,9 +10,9 @@ Hand-coded static rebuild of yslas.music, migrated off Squarespace.
    - [1.3 Swap an image](#13-swap-an-image)
    - [1.4 Add a new page](#14-add-a-new-page)
    - [1.5 Link the EPK in the menu (when ready)](#15-link-the-epk-in-the-menu-when-ready)
-   - [1.6 Fill in the LISTEN / WATCH buttons](#16-fill-in-the-listen--watch-buttons)
+   - [1.6 Edit the Sonics release, or activate the Visuals block](#16-edit-the-sonics-release-or-activate-the-visuals-block)
    - [1.7 Change colors or fonts](#17-change-colors-or-fonts)
-   - [1.8 Change the SoundCloud track on the EPK](#18-change-the-soundcloud-track-on-the-epk)
+   - [1.8 Add or change a SoundCloud embed on the EPK](#18-add-or-change-a-soundcloud-embed-on-the-epk)
    - [1.9 Replace the background video](#19-replace-the-background-video)
    - [1.10 Change the newest release](#110-change-the-newest-release-home-new-section)
    - [1.11 Deploy](#111-deploy)
@@ -24,7 +24,7 @@ Hand-coded static rebuild of yslas.music, migrated off Squarespace.
    - [3.4 Sonics and Visuals](#34-sonics-and-visuals)
    - [3.5 EPK (unlisted)](#35-epk-unlisted)
    - [3.6 Footer](#36-footer)
-4. [The fluid grid](#4-the-fluid-grid)
+4. [Layout notes](#4-layout-notes)
 5. [Config reference](#5-config-reference)
 6. [Troubleshooting](#6-troubleshooting)
 7. [Changelog](#7-changelog)
@@ -73,11 +73,35 @@ Hand-coded static rebuild of yslas.music, migrated off Squarespace.
 3. Optionally remove the `<meta name="robots" content="noindex">` line from
    `epk.html` so search engines may index it.
 
-### 1.6 Fill in the LISTEN / WATCH buttons
+### 1.6 Edit the Sonics release, or activate the Visuals block
 
-1. Open `sonics.html` (LISTEN) or `visuals.html` (WATCH).
-2. Put the destination URL in the `href=""` of the `<a class="btn split-btn">`.
-   (They are empty because the original site's buttons point nowhere yet.)
+**Change the release shown on Sonics** — open `sonics.html` and edit the
+`<div class="release">` block:
+
+1. Cover: drop the art in `assets/img/` and update the `<img src>`.
+2. Title and blurb: the `<h3 class="release-title">` and the `<p>` inside
+   `.release-desc`.
+3. Link: set the `href` on **both** the cover's `<a>` and the `LISTEN` button
+   (they point at the same place).
+
+**Add or change a SoundCloud track on Sonics** — the three players live in
+`<div class="split-audio">` just above the release. Copy an `<iframe>` and swap
+the encoded URL after `?url=`, exactly as described in recipe 1.8. All embeds
+share one fixed height set in `.split-audio iframe`.
+
+**Activate the Visuals page** — `visuals.html` currently shows a
+`<h2>COMING SOON</h2>` with the real block written directly beneath it inside an
+HTML comment:
+
+1. Delete the `<h2>COMING SOON</h2>` line.
+2. Remove the `<!-- ... -->` wrapper around the block below it.
+3. Replace the placeholder Vimeo id (and its `h=` hash, for unlisted videos)
+   with the real one — Vimeo's Share → Embed dialog gives you the whole
+   `<iframe>` to paste over it.
+4. Fill in the title, description and the button's `href`.
+
+> The commented block deliberately contains no `--` sequences, since those would
+> terminate the HTML comment early. Keep it that way if you edit it in place.
 
 ### 1.7 Change colors or fonts
 
@@ -161,7 +185,8 @@ yslas/
 │   └── site.js         # menu + footer config, burger menu, hero text fitter
 ├── assets/
 │   ├── img/            # all images (originals pulled from the Squarespace CDN)
-│   ├── video/          # background loop (yatik-bg.mp4) + poster (yatik-bg-poster.jpg)
+│   ├── video/          # background loops + posters: yatik-bg (About/EPK),
+│   │                   #   sonics-bg (Sonics), visuals-bg (Visuals)
 │   └── fonts/          # IBM Plex Mono 600/700 (+italics), Lilita One 400 (woff2, latin)
 ├── _redirects          # Netlify 301s: old /about.html → clean /about (GH Pages ignores)
 ├── .nojekyll           # keeps GitHub Pages from running Jekyll (do not delete)
@@ -277,10 +302,31 @@ column — `/// \\\`, box, `\\\ ///`, then the headshot as a wide 16∶9 rectang
 
 ### 3.4 Sonics and Visuals
 
-Mirrored twins (`.split`, Visuals adds `.flip`) on a plain light background —
-**no video here**. Square crystal artwork on one side; "COMING SOON", `///`,
-and a pill button (LISTEN / WATCH, href empty for now — see recipe 1.6) on the
-other. Sonics is image-left; Visuals is image-right. Stacks on mobile.
+Mirrored twins built on the **same shape as About and EPK**, so all four content
+pages read as one system: a `.video-hero` with its own looping background video,
+and over it a `.split-layout` grid holding `/// \\\`, a cream `.text-box`,
+`\\\ ///`, and the crystal artwork. Sonics is copy-left / artwork-right;
+Visuals adds `.flip` to mirror it. Each page's artwork is a `.parallax` host
+(§3.1c), so the crystal reacts to the pointer like the home gallery.
+
+On mobile both collapse to a single column in DOM order, with the artwork last
+and rendered as a wide 16∶9 rectangle — the same treatment as About.
+
+**Sonics** fills its box with, top to bottom:
+
+1. `.split-audio` — the three SoundCloud track players (Bodegata, Uno, Yatik),
+   each at the same fixed height.
+2. `.box-rule` — a hairline divider.
+3. `.release` — the release block ported from the alkabil artist pages: cover
+   on the left, then title, blurb and a pill button. The cover carries the same
+   hover-grow + drop-shadow as the home release cover and links to the same
+   place as the button. Below 560 px the cover stacks above the copy.
+
+**Visuals** shows only `COMING SOON` for now. The finished block — a 16∶9
+`.split-video` Vimeo embed followed by a title, blurb and button, mirroring the
+Sonics release — sits directly beneath it **commented out**, ready to swap in
+(recipe 1.6). Its Vimeo embed is a placeholder borrowed from the jehernandez
+site and must be replaced with the real video.
 
 ### 3.5 EPK (unlisted)
 
@@ -386,6 +432,26 @@ links are clean, and the host maps one to the other.
   The poster image shows until the clip is ready.
 
 ## 7. Changelog
+
+### 2026-07-25 — Sonics and Visuals built out; release block; cover sizing
+
+- **Sonics and Visuals** are now real pages instead of placeholders. Both use
+  the same `.video-hero` + cream-box + `/// \\\` shape as About and EPK, so all
+  four content pages read as one system (`.split-layout`, `.flip` mirrors it).
+- **New background videos:** `sonics-bg.mp4` (from *Bodegata*, 5–15 s) and
+  `visuals-bg.mp4` (from *Yatik Redux*, 15–25 s), muted and encoded to the same
+  recipe as `yatik-bg.mp4` (~1.8 MB each, plus poster stills).
+- **Release block** (`.release`) ported from the alkabil artist pages: cover,
+  title, blurb and button, with the site's own pill button and the same
+  hover-grow/shadow as the home cover. Sonics links the *Yatik* release and
+  carries the three SoundCloud tracks above it, sharing the release's column.
+- **Visuals** keeps "COMING SOON" visible; the video/title/blurb/button block is
+  written and **commented out** in `visuals.html`, ready to swap in. Its Vimeo
+  embed is a placeholder borrowed from the jehernandez site.
+- **Parallax** (§3.1c) now also drives the crystal artwork on both pages.
+- **Home release cover** is responsive: `52vw` from tablet up, capped at 828 px
+  (90 % of the previous fixed 920 px). Mobile is unchanged.
+- `.split` is now only the centred full-height layout used by `404.html`.
 
 ### 2026-07-19 — clean URLs, parallax hit test
 

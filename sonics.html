@@ -8,15 +8,55 @@
 	<link rel="icon" href="assets/img/favicon.ico">
 	<link rel="stylesheet" href="css/style.css">
 </head>
-<body class="light-top">
+<body>
 	<header class="site-header"></header>
 
-	<section class="split theme-light">
-		<div class="split-img"><img src="assets/img/yslas-crystal-1-square.jpg" alt="Yslas crystal artwork"></div>
-		<div class="split-text">
-			<h2>COMING SOON</h2>
-			<span class="slashes">///</span>
-			<a class="btn" href="" target="_blank">LISTEN</a>
+	<section class="video-hero">
+		<video class="bg-video" autoplay muted loop playsinline preload="auto"
+			poster="assets/video/sonics-bg-poster.jpg">
+			<source src="assets/video/sonics-bg.mp4" type="video/mp4">
+		</video>
+
+		<div class="hero-inner split-layout">
+			<h3 class="slashes slashes-top">/// \\\</h3>
+
+			<div class="text-box split-box">
+				<!-- tracks first, then the release, sharing one column width -->
+				<div class="split-audio">
+					<iframe title="Bodegata on SoundCloud" scrolling="no" allow="autoplay"
+						src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Falkabil-audio%2Fbodegata&amp;visual=false&amp;show_artwork=true&amp;hide_related=true&amp;show_comments=false&amp;show_reposts=false&amp;show_teaser=false"></iframe>
+					<iframe title="Uno on SoundCloud" scrolling="no" allow="autoplay"
+						src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Falkabil-audio%2Funo&amp;visual=false&amp;show_artwork=true&amp;hide_related=true&amp;show_comments=false&amp;show_reposts=false&amp;show_teaser=false"></iframe>
+					<iframe title="Yatik on SoundCloud" scrolling="no" allow="autoplay"
+						src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Falkabil-audio%2Fyatik&amp;visual=false&amp;show_artwork=true&amp;hide_related=true&amp;show_comments=false&amp;show_reposts=false&amp;show_teaser=false"></iframe>
+				</div>
+
+				<hr class="box-rule">
+
+				<!-- release block — cover, title, blurb, button -->
+				<div class="release">
+					<div class="release-art">
+						<a href="https://tr.ee/vqnrRS0OUF" target="_blank" rel="noopener">
+							<img src="assets/img/yatik-cover.jpg" alt="Yatik cover">
+						</a>
+					</div>
+					<div class="release-text">
+						<h3 class="release-title">Yatik</h3>
+						<div class="release-desc">
+							<p>Single from upcoming Yslas Digitales EP.</p>
+						</div>
+						<a class="btn" href="https://tr.ee/vqnrRS0OUF" target="_blank" rel="noopener">LISTEN</a>
+					</div>
+				</div>
+			</div>
+
+			<h3 class="slashes slashes-bottom">\\\ ///</h3>
+
+			<div class="split-img">
+				<div class="parallax" data-img="assets/img/yslas-crystal-1-square.jpg">
+					<img src="assets/img/yslas-crystal-1-square.jpg" alt="Yslas crystal artwork">
+				</div>
+			</div>
 		</div>
 	</section>
 
